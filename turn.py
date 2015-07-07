@@ -20,7 +20,7 @@ def turn_motor_on(pin_number):
 def turn_motor_off(pin_number):
     GPIO.output(pin_number, GPIO.LOW)
 
-def turn(direction = "left"):
+def turn(direction="left"):
     if direction is "left":
         play_audio(left_command_audio)
         sleep(1.5)
