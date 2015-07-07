@@ -12,7 +12,7 @@ def setup():
     GPIO.setup(right_motor, GPIO.OUT)
 
 def play_audio(filename):
-    os.system('mpg123 -q ' + filename + '&') # you must install mpg123 in order for this to work
+    os.system('mpg123 -q ' + filename + ' &')  # you must install mpg123 in order for this to work
 
 def turn_motor_on(pin_number):
     GPIO.output(pin_number, GPIO.HIGH)
@@ -33,3 +33,4 @@ def turn(direction="left"):
         turn_motor_on(right_motor)
         sleep(1)
         turn_motor_off(left_motor)
+
