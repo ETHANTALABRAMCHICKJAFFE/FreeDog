@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 left_motor = 23
 right_motor = 24
 left_command_audio = "randomfile"
-right_command_audio = "randomfile"
+right_command_audio = "randomfile2"
 def setup():
     GPIO.setmode(GPIO.BCM)  # setup pin number references
     GPIO.setup(left_motor, GPIO.OUT)
