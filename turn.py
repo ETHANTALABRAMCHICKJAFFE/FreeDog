@@ -2,35 +2,59 @@ import os
 from time import sleep
 import RPi.GPIO as GPIO
 
-left_motor = 23
-right_motor = 24
-left_command_audio = "randomfile"
-right_command_audio = "randomfile2"
+left_motor_a = 23  # left motor a pin number
+left_motor_b = 24  # left motor b pin number
+left_motor_e = 25  # left motor enable pin number
+right_motor_e = 26  # right motor a pin number
+right_motor_a = 27  # right motor b pin number
+right_motor_b = 28  # right motor enable pin number
+left_command_audio = "randomfile"  # honor left command audio file directory with file
+right_command_audio = "randomfile2"  # honor right command audio file directory with file
+
 def setup():
     GPIO.setmode(GPIO.BCM)  # setup pin number references
-    GPIO.setup(left_motor, GPIO.OUT)
-    GPIO.setup(right_motor, GPIO.OUT)
+    GPIO.setup(left_motor_a, GPIO.OUT)
+    GPIO.setup(left_motor_b, GPIO.OUT)
+    GPIO.setup(left_motor_e, GPIO.OUT)
+    GPIO.setup(right_motor_a, GPIO.OUT)
+    GPIO.setup(right_motor_b, GPIO.OUT)
+    GPIO.setup(right_motor_e, GPIO.OUT)
 
 def play_audio(filename):
     os.system('mpg123 -q ' + filename + ' &')  # you must install mpg123 in order for this to work
 
-def turn_motor_on(pin_number):
-    GPIO.output(pin_number, GPIO.HIGH)
+def turn_motor_on(pin_number_e, pin_number_a, pin_number_b, turn_forward: bool=True):
+    if turn_forward:
+        GPIO.output(pin_number_a, GPIO.HIGH)
+        GPIO.output(pin_number_b, GPIO.LOW)
+        GPIO.output(pin_number_e, GPIO.HIGH)
+    else:
+        GPIO.output(pin_number_a, GPIO.Low)
+        GPIO.output(pin_number_b, GPIO.HIGH)
+        GPIO.output(pin_number_e, GPIO.HIGH)
 
-def turn_motor_off(pin_number):
-    GPIO.output(pin_number, GPIO.LOW)
+def turn_motor_off(pin_number_e):
+    GPIO.output(pin_number_e, GPIO.LOW)
 
-def turn(direction="left"):
+def pull(pin_number_e, pin_number_a, pin_number_b, elapse_time):
+    turn_motor_on(pin_number_e, pin_number_a, pin_number_b, True)
+    sleep(elapse_time)
+    turn_motor_off(pin_number_e)
+
+def release(pin_number_e, pin_number_a, pin_number_b, elapse_time):
+    turn_motor_on(pin_number_e, pin_number_a, pin_number_b, False)
+    sleep(elapse_time)
+    turn_motor_off(pin_number_e)
+
+def turn(direction="left", post_audio_elapse_time=1.5, motor_runtime_elapse_time=1.0):
     if direction is "left":
         play_audio(left_command_audio)
-        sleep(1.5)
-        turn_motor_on(left_motor)
-        sleep(1)
-        turn_motor_off(left_motor)
+        sleep(post_audio_elapse_time)
+        pull(left_motor_e, left_motor_a, left_motor_b, motor_runtime_elapse_time)
+        release(left_motor_e, left_motor_a, left_motor_b, motor_runtime_elapse_time)
     else:
-        play_audio(right_command_audio)
-        sleep(1.5)
-        turn_motor_on(right_motor)
-        sleep(1)
-        turn_motor_off(left_motor)
+        play_audio(left_command_audio)
+        sleep(post_audio_elapse_time)
+        pull(right_motor_e, right_motor_a, right_motor_b, motor_runtime_elapse_time)
+        release(right_motor_e, right_motor_a, right_motor_b, motor_runtime_elapse_time)
 
