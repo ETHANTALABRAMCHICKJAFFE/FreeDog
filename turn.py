@@ -2,7 +2,7 @@ import os
 from time import sleep
 import RPi.GPIO as GPIO
 
-# note: when done using motors call GPIO.clear(). when you want to reuse turn() functions call setup()
+# note: when done using motors call GPIO.cleanup(). when you want to reuse turn() functions call setup()
 
 left_motor_a = 23  # left motor a pin number
 left_motor_b = 24  # left motor b pin number
@@ -23,6 +23,7 @@ def setup(*args):
     if len(args) > 0 and len(args)%3 == 0:
         for n in args:
             GPIO.setup(n, GPIO.OUT)
+
 '''
 def setup():
     GPIO.setmode(GPIO.BCM)  # setup pin number references
